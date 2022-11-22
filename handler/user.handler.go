@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"biller/database"
-	"biller/model"
+	"identity/database"
+	"identity/model"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -34,7 +34,7 @@ func validToken(t *jwt.Token, id string) bool {
 func validUser(id string, p string) bool {
 	db := database.DB
 	var user model.User
-	db.First(&user, id)
+	db.First(&user, "id = ?", 1)
 	if user.Username == "" {
 		return false
 	}
@@ -53,7 +53,7 @@ func GetUser(c *fiber.Ctx) error {
 	if user.Username == "" {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "No user found with ID", "data": nil})
 	}
-	return c.JSON(fiber.Map{"status": "success", "message": "Product found", "data": user})
+	return c.JSON(user)
 }
 
 // CreateUser new user

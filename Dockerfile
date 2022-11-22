@@ -8,8 +8,8 @@ RUN go mod download
 
 COPY *.go ./
 
-RUN go build -o /biller
+RUN go build -o /identity
 
 EXPOSE 9090
 
-CMD [ "/biller" ]
+CMD [ "/identity" ]

@@ -1,8 +1,8 @@
 package router
 
 import (
-	"biller/handler"
-	"biller/middleware"
+	"identity/handler"
+	"identity/middleware"
 
 	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/gofiber/fiber/v2"
@@ -25,7 +25,7 @@ func SetupRoutes(app *fiber.App) {
 	// User
 	user := api.Group("/user")
 	user.Get("/:id", middleware.Protected(), handler.GetUser)
-	user.Post("/", middleware.Protected(), handler.CreateUser)
+	user.Post("/", handler.CreateUser)
 	user.Patch("/:id", middleware.Protected(), handler.UpdateUser)
 	user.Delete("/:id", middleware.Protected(), handler.DeleteUser)
 

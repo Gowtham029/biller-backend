@@ -1,4 +1,4 @@
-module biller
+module identity
 
 go 1.19
 

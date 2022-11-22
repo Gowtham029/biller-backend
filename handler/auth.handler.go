@@ -1,10 +1,10 @@
 package handler
 
 import (
-	"biller/config"
-	"biller/database"
-	"biller/model"
 	"errors"
+	"identity/config"
+	"identity/database"
+	"identity/model"
 	"time"
 
 	"gorm.io/gorm"
@@ -64,35 +64,21 @@ func Login(c *fiber.Ctx) error {
 	}
 	identity := input.Identity
 	pass := input.Password
-
 	email, err := getUserByEmail(identity)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "Error on email", "data": err})
 	}
 
-	user, err := getUserByUsername(identity)
-	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "Error on username", "data": err})
-	}
-
-	if email == nil && user == nil {
+	// fmt.Println(user)
+	if email == nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "User not found", "data": err})
 	}
 
-	if email == nil {
-		ud = UserData{
-			ID:       user.ID,
-			Username: user.Username,
-			Email:    user.Email,
-			Password: user.Password,
-		}
-	} else {
-		ud = UserData{
-			ID:       email.ID,
-			Username: email.Username,
-			Email:    email.Email,
-			Password: email.Password,
-		}
+	ud = UserData{
+		ID:       email.ID,
+		Username: email.Username,
+		Email:    email.Email,
+		Password: email.Password,
 	}
 
 	if !CheckPasswordHash(pass, ud.Password) {
@@ -111,5 +97,5 @@ func Login(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Success login", "data": t})
+	return c.JSON(fiber.Map{"token": t})
 }
