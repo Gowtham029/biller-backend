@@ -2,7 +2,6 @@ package router
 
 import (
 	"identity/handler"
-	"identity/middleware"
 
 	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/gofiber/fiber/v2"
@@ -12,21 +11,16 @@ import (
 // SetupRoutes setup router api
 func SetupRoutes(app *fiber.App) {
 
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("identity service is running")
+	})
 	// Docs
 	app.Get("/docs/*", swagger.HandlerDefault)
 
 	// Middleware
 	api := app.Group("/api", logger.New())
 
-	// Auth
-	auth := api.Group("/auth")
-	auth.Post("/login", handler.Login)
+	api.Post("/login", handler.Login)
 
-	// User
-	user := api.Group("/user")
-	user.Get("/:id", middleware.Protected(), handler.GetUser)
-	user.Post("/", handler.CreateUser)
-	user.Patch("/:id", middleware.Protected(), handler.UpdateUser)
-	user.Delete("/:id", middleware.Protected(), handler.DeleteUser)
-
+	api.Post("/register", handler.CreateUser)
 }
